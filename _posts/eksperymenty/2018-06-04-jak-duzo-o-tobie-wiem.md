@@ -194,16 +194,18 @@ Tę cześć wpisu poświecę rzadziej sprawdzanym informacją, po części przez
 #### 2.1 GPU użytkownika
 ```js
 const gpu = () => {
-const canvas = document.getElementById("gl");
-const extension = gl.getExtension('WEBGL_debug_renderer_info');
- try {
+    const canvas = document.getElementById("gl");
+    try {
         gl = canvas.getContext("experimental-webgl");
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
     } catch (e) {}
-    
- return gl.getParameter(extension.UNMASKED_RENDERER_WEBGL)
- }
+    if (gl) {
+        const extension = gl.getExtension('WEBGL_debug_renderer_info');
+        return gl.getParameter(extension.UNMASKED_RENDERER_WEBGL)
+    } else return "Not supported";
+
+}
  ```
 Wraz z pojawieniem się WebGLa mamy dostęp do ciekawych informacji, no tak ale do wyciągnięcia karty graficznej naszego użytkownika potrzebujemy 2 rzeczy: przeglądarki która wspiera WebGLa i elementu canvas który ma ustawiony kontekst na eksperymentalny webGL. Dalej zadanie już jest proste, mamy dostęp do parametrów z których wyciągamy renderer WebGLa.
 Przykładowy wynik:
@@ -227,7 +229,7 @@ img.onload = function() {
 console.log('zalogowany');
 }
 img.onerror = function() {
-console.log('nie zalogowany');
+console.log('niezalogowany');
 }
 }());
 ```
