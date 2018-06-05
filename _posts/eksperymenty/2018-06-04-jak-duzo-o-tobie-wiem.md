@@ -7,7 +7,7 @@ categories: eksperymenty inne javascript
 ---
 
 
-Ostatnimi czasy podczas szumu związanego z **RODO** i różnymi kradzieżami tożsamości/danych, ludzie coraz bardziej martwią się oto ile informacji można o nich wyciągnąć bez ich wiedzy. W dzisiejszym artykule przedstawię kilka informacji które bez większych problemów pozwalają mi na stworzeniu profilu użytkownika który odwiedza moją stronę. Do napisania tego bloga zainspirował mnie post mojego kolegi, znajdziecie go pod tym [adresem](https://laniewski.me/security/2018/02/17/identyfikacja-uzytkownika-na-podstawie-odcisku-przegladarki.html).
+Ostatnimi czasy podczas szumu związanego z **RODO** i różnymi kradzieżami tożsamości/danych, ludzie coraz bardziej martwią się oto ile informacji można o nich wyciągnąć bez ich wiedzy. W dzisiejszym artykule przedstawię kilka informacji które bez większych problemów pozwalają mi na stworzenie profilu użytkownika który odwiedza moją stronę. Do napisania tego bloga zainspirował mnie post mojego kolegi, znajdziecie go pod tym [adresem](https://laniewski.me/security/2018/02/17/identyfikacja-uzytkownika-na-podstawie-odcisku-przegladarki.html).
 
 
 [1. Łatwo dostępne informacje](#1-łatwo-dostępne-informacje)
