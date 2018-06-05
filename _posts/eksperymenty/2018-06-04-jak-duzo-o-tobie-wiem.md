@@ -7,7 +7,7 @@ categories: eksperymenty inne javascript
 ---
 
 
-Ostatnimi czasy podczas szumu związanego z **RODO** i różnymi napadami/kradzieżami tożsamości ludzie coraz bardziej martwią się oto ile informacji można o nich wyciągnąć bez ich wiedzy. W dzisiejszym artykule przedstawię kilka informacji które bez większych problemów pozwalają mi na stworzeniu profilu użytkownika który odwiedza moją stronę. Do napisania tego bloga zainspirował mnie post mojego kolegi, znajdziecie go pod tym [adresem](https://laniewski.me/security/2018/02/17/identyfikacja-uzytkownika-na-podstawie-odcisku-przegladarki.html).
+Ostatnimi czasy podczas szumu związanego z **RODO** i różnymi kradzieżami tożsamości/danych, ludzie coraz bardziej martwią się oto ile informacji można o nich wyciągnąć bez ich wiedzy. W dzisiejszym artykule przedstawię kilka informacji które bez większych problemów pozwalają mi na stworzeniu profilu użytkownika który odwiedza moją stronę. Do napisania tego bloga zainspirował mnie post mojego kolegi, znajdziecie go pod tym [adresem](https://laniewski.me/security/2018/02/17/identyfikacja-uzytkownika-na-podstawie-odcisku-przegladarki.html).
 
 
 [1. Łatwo dostępne informacje](#1-łatwo-dostępne-informacje)
@@ -53,7 +53,7 @@ Krótko mówiąc mamy do czynienia z obiektem pozwalającym zidentyfikować tak 
 więc jak wygląda te całe appVersion?
 ```5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36```
 
-Oto przykładowe appVersion jak widać identyfikowanie z jakim systemem mamy do czynienia wydaje się być dużo prostsze niż rozpoznanie przeglądarki bo widnieją tu przynajmniej 2!
+Oto przykładowe appVersion, jak widać identyfikowanie z jakim systemem mamy do czynienia wydaje się być dużo prostsze niż rozpoznanie przeglądarki bo widnieją tu przynajmniej 2!
 
 #### 1.2 DuckTyping jako metoda rozpoznawania przeglądarek
 Jedna z znanych metod rozpoznawania przeglądarki jest tak zwany DuckTyping.
