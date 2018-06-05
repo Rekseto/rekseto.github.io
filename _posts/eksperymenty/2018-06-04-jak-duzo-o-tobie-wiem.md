@@ -31,8 +31,8 @@ Ostatnimi czasy podczas szumu związanego z **RODO** i różnymi kradzieżami to
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2.2 Czy nasz użytkownik jest zalogowany na Facebooku?](#22-czy-nasz-użytkownik-jest-zalogowany-na-facebooku)
 
 ###  1. Łatwo dostępne informacje
-Podstawowymi informacjami jakie mogę ujrzeć są twoja przeglądarka i system operacyjny, ba przeglądarka nawet 
-opakowuje te informacje w zmienne i umieszcza do swobodnego pobrania przez Web APIs
+Podstawowymi informacjami jakie mogę uzyskać jest rodzaj twojej przeglądarki i systemu operacyjnego. Przeglądarka
+opakowuje te informacje w zmienne i umieszcza do swobodnego pobrania przez Web APIs.
 #### 1.1 System operacyjny
 ```javascript
 const system = () => {
@@ -227,7 +227,7 @@ img.onload = function() {
 console.log('zalogowany');
 }
 img.onerror = function() {
-cosnole.log('nie zalogowany');
+console.log('nie zalogowany');
 }
 }());
 ```
