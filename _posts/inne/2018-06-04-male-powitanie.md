@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Grzecznie się witając"
+title:  "Małe powitanie"
 author: Rekseto
 date:   2018-06-04 20:20:00 +0200
 categories: inne
@@ -15,6 +15,6 @@ czerpać od mnie garściami założyłem własnie oto tego bloga. Tutaj krótki 
 * Dostepność
 * Python
 
-Zalecam zapisać się na subskrybcje RSS by śledzić moje poczynania we wielkim świecie.
+Zalecam zapisać się na subskrybcję RSS by śledzić moje poczynania w wielkim świecie.
 
 Do zobaczenia!
