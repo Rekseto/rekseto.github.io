@@ -239,4 +239,29 @@
     flex-direction: column;
     align-items: center;
   }
+
+
+  .postSiteHeader {
+    min-height: 10vh;
+    background: #d80027;
+    color: white;
+  
+    display: flex;
+    align-items: center;
+  }
+  .postSiteHeader__heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+  .postSiteNavigation__list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 50px;
+  }
+  
+
 }
