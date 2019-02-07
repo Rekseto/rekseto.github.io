@@ -99,6 +99,11 @@
   display: block;
   padding-right: 15px;
 }
+
+.project__source {
+  margin-top: 10px;
+  color: black;
+}
 .project__technologies {
   list-style-type: none;
 }
