@@ -3,7 +3,7 @@ layout: post
 title:  "Jak dużo mogę wiedzieć o Tobie?"
 author: Rekseto
 date:   2018-06-04 23:25:00 +0200
-categories: eksperymenty inne javascript
+categories: eksperymenty javascript
 ---
 
 

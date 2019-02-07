@@ -1,5 +1,5 @@
 ---
-layout: category
+layout: blog
 ---
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: "en" }}" prefix="og: http://ogp.me/ns#" vocab="http://schema.org">
@@ -10,11 +10,9 @@ layout: category
 
   {% include header.html %}
   <main class="main">
-    <h1 class="page-heading">Wpisy z kategorii {{ site.categories_names[ page.category ] | escape }}</h1>
+    {% include post-list.html posts=paginator.posts %}
 
-    {{ content }}
-    {% assign posts = site.categories[page.category] %}
-    {% include post-list.html posts=posts %}
+    {% include pagination.html paginator=paginator %}
 
     <p class="rss-subscribe">
       <a href="{{ "/feeds/feed.xml" | relative_url }}">
@@ -23,7 +21,6 @@ layout: category
     </p>
 
   </main>
-
 
   {% include sections/footer.html %}
 </body>

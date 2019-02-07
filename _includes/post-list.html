@@ -1,7 +1,7 @@
-<ul class="post-list">
-  {% for post in include.posts %}
-    <li>
-      {% include post.html post=post %}
-    </li>
+<section class="posts">
+  {% for post in site.posts %}
+  <article class="posts__post">
+    {% include post.html post=post %}
+  </article>
   {% endfor %}
-</ul>
+</section>

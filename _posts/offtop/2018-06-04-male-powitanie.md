@@ -3,7 +3,7 @@ layout: post
 title:  "Małe powitanie" 
 author: Rekseto 
 date:   2018-06-04 20:20:00 +0200 
-categories: inne 
+categories: offtop 
 --- 
  
 Witaj świecie! W ramach pokonania własnej bariery językowej, doskonalenia się w programowaniu i przekazywaniu wiedzy wszystkim moim czytelnikom którzy mogą jeszcze 
