@@ -12,12 +12,14 @@ W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją m
 
 Każda usługa katalogowa stanowi pewnego rodzaju bazę danych, która przechowuje użytkowników czy inne obiekty naszej sieci. To pozwala logicznie i precyzyjnie opisywać oraz zarządzać relacjami w danej sieci. Jako że nas interesuje autoryzacja użytkowników z pomocą LDAP, będziemy odpytywać serwer czy dane poświadczenia logowania znajdują odzwierciedlenie w naszym ekosystemie. Sam klient LDAP komunikuje się z serwerem za pomocą 5 operacji:
 
+
 - **bind** -  Uwierzytelnianie użytkownika
 - **unbind** - Zakończenie sesji.
 - **search** - Wyszukiwanie danego zasobu
 - **add** - Dodawanie nowego zasobu
 - **delete** - Usuniecie zasobu
 - **modify** - Modyfikacja zasobu
+
 
 W naszym przypadku będziemy korzystać tylko z bind, ale nic nie stoi na przeszkodzie by nasza aplikacja ściślej współpracowała z serwerem LDAP.
 
@@ -34,8 +36,10 @@ Oczywistym faktem jest że nie chcemy by użytkownik po przejściu na każda pod
 
 Wstawienie takiego rekordu do bazy spowoduje, że w każdym momencie kiedy przyjdzie do sprawdzania poprawności tokena, sięgamy do bazy danych wyszukujemy użytkownika o danej nazwie, następnie pobieramy unikalną wartość secret która będzie stanowić pewnego rodzaju segment całego sekretu którym będzie szyfrowany każdy token. Oczywiście moglibyśmy używać tylko jednej wspólnej wartości sekret do szyfrowania tokena JWT, ale wtedy:
 
+
 1. Tracimy na bezpieczeństwie
 2. Odbieramy sobie możliwość anulowania wszystkich tokenów dla jednego usera
+
 
 dlatego też zaimplementujemy taką wersje tokenizacji.
 
@@ -82,10 +86,12 @@ export default function(config) {
 
 Oto zasadniczo najważniejsza cześć mojego App.js, gdzie jak widać tworzę obiekt bazy której będziemy używać. inra-http pozwala mi na łatwe zarządzanie kodem, zasadniczo wszystko rozbijemy na:
 
+
 - Model
 - Service
 - Middleware
 - Route (Ścieżka)
+
 
 ### Model Użytkownika
 
@@ -340,6 +346,7 @@ Powyższy plik tak naprawdę odpowiada tylko za skorzystanie z authServices, ora
 ## Podsumowanie
 
 Nasza aplikacja jest już w pełni zintegrowana z Active Directory. Za każdym razem kiedy API będzie musiało zweryfikować pewne poświadczenia, wywołamy zapytanie do serwera LDAP. Po pozytywnej odpowiedzi wyszukujemy czy użytkownik jest w naszej bazie jeżeli jest to wyciągamy od niego wartość sekret i generujemy na jej podstawie token. Jeżeli go nie ma to dodajemy rekord do bazy, następnie generujemy token. W razie potrzeby unieważnienia tokenów możemy zmienić sekretną wartość każdego użytkownika albo jedną wspólną dla wszystkich tokenów wartość AUTH_SECRET. Samo wdrożenie naszej aplikacji do infrastruktury opartej o LDAP nie jest zatem czymś trudnym, a czasem takie rozwiązanie pozwoli nam łatwo wdrożyć wewnątrz firmową aplikacje.
+
 
 To tyle na dzisiaj, mam nadzieje że w jakiś sposób pomogłem wam zintegrować wasze aplikacje z serwerami LDAP. Kod aplikacji dostępny jest na moim [githubie](https://github.com/) pod tym [adresem](https://github.com/Rekseto/auth-ldap-example).
 
