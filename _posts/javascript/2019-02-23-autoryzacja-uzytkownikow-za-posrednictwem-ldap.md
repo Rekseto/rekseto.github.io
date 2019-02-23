@@ -6,8 +6,6 @@ date:   2019-02-24 17:20:00 +0200
 categories: javascript
 ---
 
-# Autoryzacja użytkowników w Node.js za pośrednictwem LDAP 
-
 W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją mojej aplikacji z infrastruktura firmy opartej o Windows Server i usługę Active Directory. Byłem zmuszony poznać sposób na integrację autoryzacji mojej aplikacji z stworzonymi już użytkownikami Active Directory. Opiera się o LDAP, jako że nie znalazłem żadnego polskiego źródła mówiącego na ten temat, postanowiłem sam napisać posta, w którym bliżej przedstawię jak wygląda praca z Active Directory w node.js.
 
 ## Usługi Katalogowe a Autoryzacja
