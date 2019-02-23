@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Autoryzacja użytkowników w Node.js za pośrednictwem LDAP?"
+title:  "Autoryzacja użytkowników w Node.js za pośrednictwem LDAP"
 author: Rekseto
 date:   2019-02-24 17:20:00 +0200
 categories: javascript
