@@ -2,30 +2,30 @@
 layout: post
 title:  "Autoryzacja użytkowników w Node.js za pośrednictwem LDAP"
 author: Rekseto
-date:   2019-02-24 17:20:00 +0200
+date:   2019-02-23 17:20:00 +0200
 categories: javascript
 ---
 
-W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją mojej aplikacji z infrastruktura firmy opartej o Windows Server i usługę Active Directory. Byłem zmuszony poznać sposób na integrację autoryzacji mojej aplikacji z stworzonymi już użytkownikami Active Directory. Opiera się o LDAP, jako że nie znalazłem żadnego polskiego źródła mówiącego na ten temat, postanowiłem sam napisać posta, w którym bliżej przedstawię jak wygląda praca z Active Directory w node.js.
+W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją mojej aplikacji z infrastrukturą firmy opartej o Windows Server i usługę Active Directory. Byłem zmuszony poznać sposób na integrację autoryzacji mojej aplikacji ze stworzonymi już użytkownikami Active Directory. Opiera się o LDAP, jako że nie znalazłem żadnego polskiego źródła opisującego ten problem, postanowiłem sam napisać posta, w którym bliżej przedstawię jak wygląda praca z Active Directory w node.js.
 
 ## Usługi Katalogowe a Autoryzacja
 
 Każda usługa katalogowa stanowi pewnego rodzaju bazę danych, która przechowuje użytkowników czy inne obiekty naszej sieci. To pozwala logicznie i precyzyjnie opisywać oraz zarządzać relacjami w danej sieci. Jako że nas interesuje autoryzacja użytkowników z pomocą LDAP, będziemy odpytywać serwer czy dane poświadczenia logowania znajdują odzwierciedlenie w naszym ekosystemie. Sam klient LDAP komunikuje się z serwerem za pomocą 5 operacji:
 
 
-- **bind** -  Uwierzytelnianie użytkownika
-- **unbind** - Zakończenie sesji.
-- **search** - Wyszukiwanie danego zasobu
-- **add** - Dodawanie nowego zasobu
-- **delete** - Usuniecie zasobu
-- **modify** - Modyfikacja zasobu
+- **bind** -  uwierzytelnianie użytkownika
+- **unbind** - zakończenie sesji.
+- **search** - wyszukiwanie danego zasobu
+- **add** - dodawanie nowego zasobu
+- **delete** - usuniecie zasobu
+- **modify** - modyfikacja zasobu
 
 
-W naszym przypadku będziemy korzystać tylko z bind, ale nic nie stoi na przeszkodzie by nasza aplikacja ściślej współpracowała z serwerem LDAP.
+W naszym przypadku będziemy korzystać tylko z bind, ale nic nie stoi na przeszkodzie, by nasza aplikacja ściślej współpracowała z serwerem LDAP.
 
 ## Autoryzacja Client <-> Aplikacja
 
-Oczywistym faktem jest że nie chcemy by użytkownik po przejściu na każda podstronę na nowo musiał wpisywać swoje dane, dlatego też zwykle używamy tu autoryzacji opartej o sesje albo o tokeny JWT, i właśnie tą drugą metodę spróbujemy zintegrować z naszą usługa katalogowa. W tym celu musimy przygotować sobie środowisko bazo danowe w moim przypadku będzie to baza MongoDB ze względu na prostotę. Otóż za każdym razem kiedy użytkownik będzie chciał się dostać do naszego serwisu prześle on swoje poświadczenia (nazwę i hasło), które następnie prześlemy do serwera LDAP. Po otrzymaniu pozytywnej odpowiedzi wstawimy (jeżeli nie istnieje) następujący obiekt do naszej bazy.
+Oczywistym faktem jest, że nie chcemy, by użytkownik po przejściu na każdą podstronę na nowo musiał wpisywać swoje dane, dlatego też zwykle używamy tu autoryzacji opartej o sesje albo o tokeny JWT; i właśnie tą drugą metodę spróbujemy zintegrować z naszą usługą katalogową. W tym celu musimy przygotować sobie środowisko bazo-danowe. W moim przypadku będzie to baza MongoDB - wybrałem ją ze względu na prostotę. Otóż za każdym razem, gdy użytkownik będzie chciał się dostać do naszego serwisu prześle on swoje poświadczenia (nazwę i hasło), które następnie prześlemy do serwera LDAP. Po otrzymaniu pozytywnej odpowiedzi wstawimy (jeżeli nie istnieje) następujący obiekt do naszej bazy.
 
 ```javascript
 {
@@ -34,18 +34,18 @@ Oczywistym faktem jest że nie chcemy by użytkownik po przejściu na każda pod
 }
 ```
 
-Wstawienie takiego rekordu do bazy spowoduje, że w każdym momencie kiedy przyjdzie do sprawdzania poprawności tokena, sięgamy do bazy danych wyszukujemy użytkownika o danej nazwie, następnie pobieramy unikalną wartość secret która będzie stanowić pewnego rodzaju segment całego sekretu którym będzie szyfrowany każdy token. Oczywiście moglibyśmy używać tylko jednej wspólnej wartości sekret do szyfrowania tokena JWT, ale wtedy:
+Wstawienie takiego rekordu do bazy spowoduje, że w każdym momencie kiedy przyjdzie do sprawdzania poprawności tokena, sięgamy do bazy danych, wyszukujemy użytkownika o danej nazwie, następnie pobieramy unikalną wartość secret, która będzie stanowić pewnego rodzaju segment całego sekretu, którym będzie szyfrowany każdy token. Oczywiście moglibyśmy używać tylko jednej wspólnej wartości sekret do szyfrowania tokena JWT, ale wtedy:
 
 
 1. Tracimy na bezpieczeństwie
-2. Odbieramy sobie możliwość anulowania wszystkich tokenów dla jednego usera
+2. Odbieramy sobie możliwość anulowania wszystkich tokenów dla jednego użytkownika
 
 
 dlatego też zaimplementujemy taką wersje tokenizacji.
 
 ## Biblioteki do Node.js
 
-Jeżeli chodzi o biblioteki pozwalające kontaktować się nam z serwerem LDAP, to ja osobiście preferuję [ldapjs](https://github.com/joyent/node-ldapjs>), która stanowi chyba najprzystępniejszą jaką znalazłem, niestety, sama biblioteka powstała stosunkowo dosyć dawno i nie implementuje ona natywnie Promises, które ułatwiają nam pracę przy asynchronicznym kodzie, dlatego też użyjemy [promised-ldap](<https://www.npmjs.com/package/promised-ldap>).
+Jeżeli chodzi o biblioteki pozwalające kontaktować się nam z serwerem LDAP, to ja osobiście preferuję [ldapjs](https://github.com/joyent/node-ldapjs>), która stanowi chyba najprzystępniejszą, jaką znalazłem. Niestety, sama biblioteka powstała stosunkowo dosyć dawno i nie implementuje ona natywnie Promises, które ułatwiają nam pracę przy asynchronicznym kodzie, dlatego też użyjemy [promised-ldap](<https://www.npmjs.com/package/promised-ldap>).
 
 ## Kod
 
@@ -84,7 +84,7 @@ export default function(config) {
 
 
 
-Oto zasadniczo najważniejsza cześć mojego App.js, gdzie jak widać tworzę obiekt bazy której będziemy używać. inra-http pozwala mi na łatwe zarządzanie kodem, zasadniczo wszystko rozbijemy na:
+Oto zasadniczo najważniejsza cześć mojego App.js, gdzie jak widać tworzę obiekt bazy której będziemy używać. Inra-Http pozwala mi na łatwe zarządzanie kodem. zasadniczo wszystko rozbijemy na:
 
 
 - Model
@@ -114,7 +114,7 @@ Model posiada tylko pole username (pozwoli nam identyfikować użytkownika), i s
 
 ### Service Auth
 
-Service jest elementem naszej aplikacji gdzie znajdują się funkcje odpowiedzialne za operacje na danych typu: tworzenie użytkownika, pobieranie wszystkich użytkowników z bazy, usuwanie użytkowników. Funkcje te będą później wykorzystywane w obsługiwaniu ścieżek.
+Service jest elementem naszej aplikacji, gdzie znajdują się funkcje odpowiedzialne za operacje na danych typu: tworzenie użytkownika, pobieranie wszystkich użytkowników z bazy, usuwanie użytkowników. Funkcje te będą później wykorzystywane w obsługiwaniu ścieżek.
 
 ```javascript
 import LdapClient from "promised-ldap"; 
@@ -181,9 +181,9 @@ export default (database, logger) => {
 };
 ```
 
-Powyższy kod zawiera tylko 2 proste funkcje.Pierwsza odpowiedzialna za stworzenie użytkownika. Druga zajmująca się logowaniem.
+Powyższy kod zawiera tylko 2 proste funkcje. Pierwsza odpowiedzialna za stworzenie użytkownika, druga zajmuję się logowaniem.
 
-Użycie LDAP jest tutaj jak widać banalne, wystarczy przesłać za pomocą funkcji **bind** nazwę użytkownika oraz jego hasło, jeżeli wystąpi błąd to znaczy, że użytkownika nie ma w Active Directory albo hasło jest niepoprawne. Jeżeli wszystko przebiegło pomyślnie to zwracamy token. Generowanie tokena realizujemy poprzez wcześniej stworzona funkcje pomocniczą generateToken, znajduję się ona w authUtils.js
+Użycie LDAP jest tutaj jak widać banalne, wystarczy przesłać za pomocą funkcji **bind** nazwę użytkownika oraz jego hasło, jeżeli wystąpi błąd, to znaczy, że użytkownika nie ma w Active Directory, albo hasło jest niepoprawne. Jeżeli wszystko przebiegło pomyślnie to zwracamy token. Generowanie tokena realizujemy poprzez wcześniej stworzoną funkcję pomocniczą generateToken - znajduję się ona w authUtils.js
 
 ```javascript
 /**
@@ -211,7 +211,7 @@ export function generateToken(record, expiresIn = 86400) {
 
 ### Middleware isAuthorized
 
-Middleware można nazwać funkcja która wywołujemy przed obsłużeniem scieżki, tutaj akurat wykorzystamy middleware do sprawdzenia tokena który zostaje nam przesłany w nagłówku żądania. Jeżeli token jest poprawny to żądanie zostanie wykonane tak jak zdefiniowaliśmy w scieżce, jeżeli nie to wyrzucimy błąd który przejmie nasz serwer.
+Middleware można nazwać funkcją, którą wywołujemy przed obsłużeniem ścieżki, tutaj akurat wykorzystamy middleware do sprawdzenia tokena, który zostaje nam przesłany w nagłówku żądania. Jeżeli token jest poprawny, to żądanie zostanie wykonane tak, jak zdefiniowaliśmy w ścieżce, jeżeli nie, to wyrzucimy błąd, który przejmie nasz serwer.
 
 ```javascript
 @middleware()
@@ -289,7 +289,7 @@ class isAuthorizedMiddleware {
 
 ### Route Auth
 
-Route (Ścieżka) to cześć aplikacji w której odbieramy żądania i decydujemy się co z nimi zrobić.
+Route (Ścieżka) to cześć aplikacji, w której odbieramy żądania i decydujemy się, co z nimi zrobić.
 
 ```javascript
 import compose from "koa-compose";
@@ -345,8 +345,8 @@ Powyższy plik tak naprawdę odpowiada tylko za skorzystanie z authServices, ora
 
 ## Podsumowanie
 
-Nasza aplikacja jest już w pełni zintegrowana z Active Directory. Za każdym razem kiedy API będzie musiało zweryfikować pewne poświadczenia, wywołamy zapytanie do serwera LDAP. Po pozytywnej odpowiedzi wyszukujemy czy użytkownik jest w naszej bazie jeżeli jest to wyciągamy od niego wartość sekret i generujemy na jej podstawie token. Jeżeli go nie ma to dodajemy rekord do bazy, następnie generujemy token. W razie potrzeby unieważnienia tokenów możemy zmienić sekretną wartość każdego użytkownika albo jedną wspólną dla wszystkich tokenów wartość AUTH_SECRET. Samo wdrożenie naszej aplikacji do infrastruktury opartej o LDAP nie jest zatem czymś trudnym, a czasem takie rozwiązanie pozwoli nam łatwo wdrożyć wewnątrz firmową aplikacje.
+Nasza aplikacja jest już w pełni zintegrowana z Active Directory. Za każdym razem, kiedy API będzie musiało zweryfikować pewne poświadczenia, wywołamy zapytanie do serwera LDAP. Po pozytywnej odpowiedzi wyszukujemy, czy użytkownik jest w naszej bazie, jeżeli jest, to wyciągamy od niego wartość sekret i generujemy na jej podstawie token. Jeżeli go nie ma, to dodajemy rekord do bazy, następnie generujemy token. W razie potrzeby unieważnienia tokenów, możemy zmienić sekretną wartość każdego użytkownika albo jedną wspólną dla wszystkich tokenów wartość AUTH_SECRET. Samo wdrożenie naszej aplikacji do infrastruktury opartej o LDAP nie jest zatem czymś trudnym, a czasem takie rozwiązanie pozwoli nam łatwo wdrożyć wewnątrz firmową aplikacje.
 
 
-To tyle na dzisiaj, mam nadzieje że w jakiś sposób pomogłem wam zintegrować wasze aplikacje z serwerami LDAP. Kod aplikacji dostępny jest na moim [githubie](https://github.com/) pod tym [adresem](https://github.com/Rekseto/auth-ldap-example).
+To tyle na dzisiaj, mam nadzieję, że w jakiś sposób pomogłem wam zintegrować wasze aplikacje z serwerami LDAP. Kod aplikacji dostępny jest na moim [githubie](https://github.com/) pod [tym adresem](https://github.com/Rekseto/auth-ldap-example).
 

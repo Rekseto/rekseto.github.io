@@ -46,18 +46,18 @@ layout: post
 <body>
   {% include navigation.html %}
   <main class="main">
-    <article class="postSite" typeof="BlogPosting">
+    <article class="post" typeof="BlogPosting">
 
-      <header class="postSite__header">
-        <h1 class="postSite__title" property="name headline">{{ page.title | escape }}</h1>
-        <p class="postSite__meta"><time datetime="{{ page.date | date_to_xmlschema }}" property="datePublished">{{
+      <header class="post__header">
+        <h1 class="post__title" property="name headline">{{ page.title | escape }}</h1>
+        <p class="post__meta"><time datetime="{{ page.date | date_to_xmlschema }}" property="datePublished">{{
             page.date
             |
             date: "%d-%m-%Y" }}</time>{% if page.author %} • <span property="author" typeof="Person"><span property="name">{{
               page.author }}</span></span>{% endif %}</p>
       </header>
 
-      <div class="postSite__content" property="articleBody">
+      <div class="post__content" property="articleBody">
         {{ content }}
       </div>
     </article>
