@@ -220,26 +220,28 @@
 }
 
 .footer {
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background: #d80027;
-  height: 10vh;
+  min-height: 10vh;
   color: white;
-
 }
 
 .footer a {
   color: white;
 }
 
+.footer p {
+  text-align: center;
+  padding: 10px;
+}
 
 @media (max-width: 600px) {
   .header {
     background-size: 100%;
     background-repeat: no-repeat no-repeat;
-
   }
   .navigation__list {
     flex-direction: column;
@@ -254,13 +256,12 @@
     padding: 5px;
   }
 
-
   .postSiteHeader {
     min-height: 10vh;
-    max-height:40vh;
+    max-height: 40vh;
     background: #d80027;
     color: white;
-  
+
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -286,6 +287,4 @@
     flex-direction: column;
     align-items: center;
   }
-  
-
 }
