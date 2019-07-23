@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="{{ page.lang | default: site.lang | default: "en" }}" prefix="og: http://ogp.me/ns#" vocab="http://schema.org">
-
-{% include head.html %}
+<!DOCTYPE html> <html lang="{{
+  page.lang | default: site.lang | default: "en"
+}}" prefix="og: http://ogp.me/ns#" vocab="http://schema.org"> {% include
+head.html %}
 
 <body>
-
   {% include header.html %}
 
   <main class="main">
-    {% include sections/projects.html %}
-    {% include sections/contact.html %}
+    {% include sections/projects.html %} {% include sections/contact.html %}
   </main>
-
 
   {% include sections/footer.html %}
 
+  {% include ga.html %}
+  {% include cookieScript.html %}
 </body>
-
 </html>

@@ -10,7 +10,10 @@ layout: blog
 
   {% include header.html %}
   <main class="main">
-    {% include post-list.html posts=paginator.posts %}
+
+    
+    {% assign posts = site.posts %}
+    {% include post-list.html posts=posts %}
 
     {% include pagination.html paginator=paginator %}
 
@@ -23,6 +26,8 @@ layout: blog
   </main>
 
   {% include sections/footer.html %}
+  {% include ga.html %}
+  {% include cookieScript.html %}
 </body>
 
 </html>

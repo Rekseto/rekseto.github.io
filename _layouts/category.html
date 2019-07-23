@@ -10,12 +10,10 @@ layout: category
 
   {% include header.html %}
   <main class="main">
-    <h1 class="page-heading">Wpisy z kategorii {{ site.categories_names[ page.category ] | escape }}</h1>
-
-    {{ content }}
+    <h1 class="category-heading">Wpisy z kategorii {{ site.categories_names[ page.category ] | escape }}</h1>
+    
     {% assign posts = site.categories[page.category] %}
     {% include post-list.html posts=posts %}
-
     <p class="rss-subscribe">
       <a href="{{ "/feeds/feed.xml" | relative_url }}">
         <img src="{{ "/assets/rss.png" | relative_url }}" alt="Subskrybuj blog" title="Subskrybuj blog">
@@ -26,6 +24,9 @@ layout: category
 
 
   {% include sections/footer.html %}
+  {% include ga.html %}
+  {% include cookieScript.html %}
+
 </body>
 
 </html>

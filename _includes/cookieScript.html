@@ -1,0 +1,40 @@
+<script>
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2)
+      return parts
+        .pop()
+        .split(";")
+        .shift();
+  }
+
+  const hasAccepted = getCookie("cookie") !== undefined;
+
+  if (!hasAccepted) {
+    document
+      .querySelector("body")
+      .insertAdjacentHTML(
+        "beforeend",
+        `<div class="cookiebanner" style="position: fixed; left: 0px; right: 0px; height: auto; min-height: 21px; z-index: 255; background: rgb(0, 0, 0); color: rgb(221, 221, 221); line-height: 21px; padding: 5px 16px; font-family: arial, sans-serif; font-size: 14px; text-align: center; bottom: 0px; opacity: 1;"><div class="cookiebanner-close" style="float: right; padding-left: 5px; cursor: pointer;">✖</div><span>Używam cookies w celu polepszenia działania witryny. <a href="/politics" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: rgb(170, 170, 170); font-weight: normal;">Dowiedz się więcej</a></span></div>`
+      );
+
+    const close = document.querySelector(".cookiebanner-close");
+    close.addEventListener("click", () => {
+      const cookieBanner = document.querySelector(".cookiebanner");
+      cookieBanner.parentNode.removeChild(cookieBanner);
+
+      setCookie("cookie", "true", 999);
+    });
+  }
+</script>

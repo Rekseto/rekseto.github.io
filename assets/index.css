@@ -21,6 +21,20 @@
   text-align: center;
 }
 
+.politics {
+  min-height: 95vh;
+  padding-top: 85px;
+}
+
+.politics__heading {
+  font-size: 2.6em;
+  text-align: center;
+}
+
+.politics__content {
+  padding: 55px;
+}
+
 .header_desc {
   font-size: 1.4rem;
 }
@@ -82,7 +96,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20vh;
+  margin-top: 15vh;
   padding: 0 10vw 0 10vw;
 }
 
@@ -140,7 +154,7 @@
   display: flex;
   flex-direction: column;
   align-content: center;
-  margin-top: 25vh;
+  margin-top: 5vh;
   padding: 10vh 15vw 0 15vw;
 }
 .posts__post {
@@ -287,4 +301,8 @@
     flex-direction: column;
     align-items: center;
   }
+}
+.category-heading {
+  padding-top: 80px;
+  text-align: center;
 }

@@ -1,0 +1,46 @@
+---
+layout: politics
+---
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}" prefix="og: http://ogp.me/ns#" vocab="http://schema.org">
+
+{% include head.html %}
+
+<body>
+
+  {% include header.html %}
+  <main class="main">
+
+      <section class="section politics">
+          <h2 class="politics__heading">
+            Polityka Prywatności
+          </h2>
+        
+          <article class="politics__content">
+            <h3>Pliki cookies i inne technologie śledzące</h3>
+            <p>
+              Na mojej stronie wykorzystuje pliki cookies, by zapewnić Ci najlepsze
+              doświadczenie z orzystaniem z niej.
+            </p>
+        
+            <h4>Analiza i statystyka</h4>
+        
+            <p>
+              Wykorzystuję cookies do śledzenia statystyk strony, takich jak liczba osób
+              odwiedzających, rodzaj systemu operacyjnego i przeglądarki internetowej
+              wykorzystywanej do przeglądania strony, czas spędzony na stronie,
+              odwiedzone podstrony etc. Korzystam w tym zakresie z Google Analytics, co
+              wiąże się z wykorzystaniem plików cookies firmy Google LLC.
+            </p>
+          </article>
+        </section>
+        
+  </main>
+
+
+  {% include sections/footer.html %}
+  {% include ga.html %}
+  {% include cookieScript.html %}
+</body>
+
+</html>

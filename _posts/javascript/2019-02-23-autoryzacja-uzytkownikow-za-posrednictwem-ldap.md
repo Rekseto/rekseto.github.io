@@ -1,9 +1,9 @@
 ---
 layout: post
-title:  "Autoryzacja użytkowników w Node.js za pośrednictwem LDAP"
+title: "Autoryzacja użytkowników w Node.js za pośrednictwem LDAP"
 author: Rekseto
-date:   2019-02-23 17:20:00 +0200
-categories: javascript
+date: 2019-02-23 17:20:00 +0200
+categories: [javascript]
 ---
 
 W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją mojej aplikacji z infrastrukturą firmy opartej o Windows Server i usługę Active Directory. Byłem zmuszony poznać sposób na integrację autoryzacji mojej aplikacji ze stworzonymi już użytkownikami Active Directory. Opiera się o LDAP, jako że nie znalazłem żadnego polskiego źródła opisującego ten problem, postanowiłem sam napisać posta, w którym bliżej przedstawię jak wygląda praca z Active Directory w node.js.
@@ -12,14 +12,12 @@ W związku z moim ostatnim zleceniem, w którym zetknąłem się z integracją m
 
 Każda usługa katalogowa stanowi pewnego rodzaju bazę danych, która przechowuje użytkowników czy inne obiekty naszej sieci. To pozwala logicznie i precyzyjnie opisywać oraz zarządzać relacjami w danej sieci. Jako że nas interesuje autoryzacja użytkowników z pomocą LDAP, będziemy odpytywać serwer czy dane poświadczenia logowania znajdują odzwierciedlenie w naszym ekosystemie. Sam klient LDAP komunikuje się z serwerem za pomocą 5 operacji:
 
-
-- **bind** -  uwierzytelnianie użytkownika
+- **bind** - uwierzytelnianie użytkownika
 - **unbind** - zakończenie sesji.
 - **search** - wyszukiwanie danego zasobu
 - **add** - dodawanie nowego zasobu
 - **delete** - usuniecie zasobu
 - **modify** - modyfikacja zasobu
-
 
 W naszym przypadku będziemy korzystać tylko z bind, ale nic nie stoi na przeszkodzie, by nasza aplikacja ściślej współpracowała z serwerem LDAP.
 
@@ -36,16 +34,14 @@ Oczywistym faktem jest, że nie chcemy, by użytkownik po przejściu na każdą 
 
 Wstawienie takiego rekordu do bazy spowoduje, że w każdym momencie kiedy przyjdzie do sprawdzania poprawności tokena, sięgamy do bazy danych, wyszukujemy użytkownika o danej nazwie, następnie pobieramy unikalną wartość secret, która będzie stanowić pewnego rodzaju segment całego sekretu, którym będzie szyfrowany każdy token. Oczywiście moglibyśmy używać tylko jednej wspólnej wartości sekret do szyfrowania tokena JWT, ale wtedy:
 
-
 1. Tracimy na bezpieczeństwie
 2. Odbieramy sobie możliwość anulowania wszystkich tokenów dla jednego użytkownika
-
 
 dlatego też zaimplementujemy taką wersje tokenizacji.
 
 ## Biblioteki do Node.js
 
-Jeżeli chodzi o biblioteki pozwalające kontaktować się nam z serwerem LDAP, to ja osobiście preferuję [ldapjs](https://github.com/joyent/node-ldapjs>), która stanowi chyba najprzystępniejszą, jaką znalazłem. Niestety, sama biblioteka powstała stosunkowo dosyć dawno i nie implementuje ona natywnie Promises, które ułatwiają nam pracę przy asynchronicznym kodzie, dlatego też użyjemy [promised-ldap](<https://www.npmjs.com/package/promised-ldap>).
+Jeżeli chodzi o biblioteki pozwalające kontaktować się nam z serwerem LDAP, to ja osobiście preferuję [ldapjs](https://github.com/joyent/node-ldapjs>), która stanowi chyba najprzystępniejszą, jaką znalazłem. Niestety, sama biblioteka powstała stosunkowo dosyć dawno i nie implementuje ona natywnie Promises, które ułatwiają nam pracę przy asynchronicznym kodzie, dlatego też użyjemy [promised-ldap](https://www.npmjs.com/package/promised-ldap).
 
 ## Kod
 
@@ -56,9 +52,9 @@ export default function(config) {
   const logger = console;
   // Tutaj ustawiam za logger domyślną konsole ale nic nie stoi na przeszkodzie wykorzystaniu jakieś biblioteki pokroju winston
 
-  const database = initDatabase({logger}, config); // Tutaj tworzę obiekt bazy
+  const database = initDatabase({ logger }, config); // Tutaj tworzę obiekt bazy
 
-  const server = initServer({logger, database}, config); 
+  const server = initServer({ logger, database }, config);
   // Jako że wszystkie elementy naszej aplikacji korzystaja z bazy danych to przekazujemy ją do serwera
 
   return new Promise((resolve, reject) => {
@@ -79,19 +75,14 @@ export default function(config) {
       });
   });
 }
-
 ```
 
-
-
 Oto zasadniczo najważniejsza cześć mojego App.js, gdzie jak widać tworzę obiekt bazy której będziemy używać. Inra-Http pozwala mi na łatwe zarządzanie kodem. zasadniczo wszystko rozbijemy na:
-
 
 - Model
 - Service
 - Middleware
 - Route (Ścieżka)
-
 
 ### Model Użytkownika
 
@@ -102,11 +93,11 @@ export default mongoose => {
   const Schema = mongoose.Schema;
 
   const User = new Schema({
-    username: {type: String, required: true, unique: true}, // Pole username musi być unikalne
-    secret: {type: String, required: true} // Secret nigdy nie powinien być pusty
+    username: { type: String, required: true, unique: true }, // Pole username musi być unikalne
+    secret: { type: String, required: true } // Secret nigdy nie powinien być pusty
   });
 
-  return {schema: User, modelName: "User"};
+  return { schema: User, modelName: "User" };
 };
 ```
 
@@ -117,16 +108,17 @@ Model posiada tylko pole username (pozwoli nam identyfikować użytkownika), i s
 Service jest elementem naszej aplikacji, gdzie znajdują się funkcje odpowiedzialne za operacje na danych typu: tworzenie użytkownika, pobieranie wszystkich użytkowników z bazy, usuwanie użytkowników. Funkcje te będą później wykorzystywane w obsługiwaniu ścieżek.
 
 ```javascript
-import LdapClient from "promised-ldap"; 
+import LdapClient from "promised-ldap";
 import InternalServerError from "../errors/InternalServerError";
-import {getRandomString} from "../../utils/cryptoUtils";
-import {generateToken} from "../../utils/authUtils";
+import { getRandomString } from "../../utils/cryptoUtils";
+import { generateToken } from "../../utils/authUtils";
 
 export default (database, logger) => {
-  const {User} = database.models; // Model Usera który stworzyliśmy
+  const { User } = database.models; // Model Usera który stworzyliśmy
 
   return {
-    async createUser({username}) { // Funkcja odpowiadająca za tworzenie użytkownika
+    async createUser({ username }) {
+      // Funkcja odpowiadająca za tworzenie użytkownika
       try {
         const secret = getRandomString(16); // 16-znakowy sekret
         const user = await User.create({
@@ -140,35 +132,36 @@ export default (database, logger) => {
       }
     },
 
-    async login({username, password}) { 
-// Funkcja odpowiadająca logowaniu przyjmuje username i password
+    async login({ username, password }) {
+      // Funkcja odpowiadająca logowaniu przyjmuje username i password
       try {
-        if (!password) { 
-// Jeżeli hasło nie zostało podane to wyrzucamy błąd.. (Aczkolwiek jeżeli chcemy by użytkownik mógł logować się bez hasła to nic nie stoi na przeszkodzie w usunieciu tego fragmentu kodu)
+        if (!password) {
+          // Jeżeli hasło nie zostało podane to wyrzucamy błąd.. (Aczkolwiek jeżeli chcemy by użytkownik mógł logować się bez hasła to nic nie stoi na przeszkodzie w usunieciu tego fragmentu kodu)
           throw new InternalServerError();
         }
 
-        const client = new LdapClient({ // Tutaj tworzymy Klienta LDAP 
-          url: "ldap://test.local" 
+        const client = new LdapClient({
+          // Tutaj tworzymy Klienta LDAP
+          url: "ldap://test.local"
           // Tutaj podajemy domene na której postawiony jest nasz serwer LDAP
-        }); 
+        });
 
         await client.bind(username, password);
-          // Z dokumentacji jasno wynika że operacja bind jest odpowiedzialna za uwierzytelnianie. Jeżeli wystąpi błąd to zostanie on wyrzucony do wyższej warstwy naszej aplikacji
+        // Z dokumentacji jasno wynika że operacja bind jest odpowiedzialna za uwierzytelnianie. Jeżeli wystąpi błąd to zostanie on wyrzucony do wyższej warstwy naszej aplikacji
 
         await client.unbind();
         // Jeżeli już nie potrzebujemy korzystać z LDAP to możemy zakończyć połączenie
-        let userRecord = await User.findOne({username}); // Wyszukujemy danego użytkownika w bazie
+        let userRecord = await User.findOne({ username }); // Wyszukujemy danego użytkownika w bazie
 
         if (!userRecord) {
           // Tutaj tworzymy użytkownika w razie gdyby nie było go jeszcze w bazie
-          userRecord = await this.createUser({username});
+          userRecord = await this.createUser({ username });
         }
 
         const token = generateToken({
           // No i na samym końcu możemy wygenerować token JWT
           id: userRecord._id, // Z id będziemy potem korzystać przy odczytywaniu tokena
-          secret: userRecord.secret 
+          secret: userRecord.secret
         });
 
         return token;
@@ -196,18 +189,14 @@ Użycie LDAP jest tutaj jak widać banalne, wystarczy przesłać za pomocą funk
  */
 export function generateToken(record, expiresIn = 86400) {
   const serverSecret = process.env.AUTH_SECRET; // Pobieramy sekret z zmiennej środowiskowej
-  const tokenSecret = `${record.secret}@${serverSecret}`; 
+  const tokenSecret = `${record.secret}@${serverSecret}`;
 
- 
-   // Tutaj korzystamy z funkcji bilbioteki jsonwebtoken
-  return jwt.sign({id: record.id}, tokenSecret, {expiresIn}); 
+  // Tutaj korzystamy z funkcji bilbioteki jsonwebtoken
+  return jwt.sign({ id: record.id }, tokenSecret, { expiresIn });
 }
-
 ```
 
 Łączymy sekret unikalny dla każdego użytkownika z globalnym tokenem, w przypadku zmiany któregokolwiek z nich unieważniamy tokeny oparte o takie połączenie. Jeżeli zmienimy tylko sekret użytkownika, to unieważnimy wszystkie tokeny użytkownika. W przypadku zmiany AUTH_SECRET unieważnimy każdy token.
-
-
 
 ### Middleware isAuthorized
 
@@ -216,7 +205,7 @@ Middleware można nazwać funkcją, którą wywołujemy przed obsłużeniem ści
 ```javascript
 @middleware()
 class isAuthorizedMiddleware {
-  constructor({database}) {
+  constructor({ database }) {
     this.models = database.models;
   }
 
@@ -231,7 +220,7 @@ class isAuthorizedMiddleware {
     this.token = extractToken(ctx);
 
     if (!this.token) {
-    // Token nie został wysłany w Headerze 
+      // Token nie został wysłany w Headerze
       throw new NotAllowedError("Cannot extract token from context");
     }
   }
@@ -245,17 +234,15 @@ class isAuthorizedMiddleware {
   async handle(ctx, next) {
     const data = await this.fetchUser(); // Pobieramy użytkownika
     const secret = `${data.secret}@${process.env.AUTH_SECRET}`;
- // Pobieramy sekret użytkownika, a następnie łaczymy go z globalnym sekretem.
-    
-// Deszyfrujemy token za pomocą sekretu 
+    // Pobieramy sekret użytkownika, a następnie łaczymy go z globalnym sekretem.
+
+    // Deszyfrujemy token za pomocą sekretu
     return jwt.verify(this.token, secret, (error, decoded) => {
-       
-      if (error) { 
-// Jeżeli coś poszło nie tak to znaczy, że token jest unieważniony
+      if (error) {
+        // Jeżeli coś poszło nie tak to znaczy, że token jest unieważniony
         throw new NotAllowedError(error.message);
       }
 
-        
       // Przypisujemy do obiektu ctx użytkownika i zdekodowane dane z jwt
       ctx.state.user = data;
       ctx.state.jwt = decoded;
@@ -271,10 +258,10 @@ class isAuthorizedMiddleware {
    */
   async fetchUser() {
     try {
-      const {User} = this.models; 
-      const {payload} = decodeToken(this.token); 
+      const { User } = this.models;
+      const { payload } = decodeToken(this.token);
       // dekodujemy token i uzyskujemy dostęp do wcześniej przypisanej wartości id
-        
+
       return User.findOne({
         _id: payload.id
       });
@@ -285,15 +272,13 @@ class isAuthorizedMiddleware {
 }
 ```
 
-
-
 ### Route Auth
 
 Route (Ścieżka) to cześć aplikacji, w której odbieramy żądania i decydujemy się, co z nimi zrobić.
 
 ```javascript
 import compose from "koa-compose";
-import controller, {get, post, del, put} from "inra-server-http/dest/router";
+import controller, { get, post, del, put } from "inra-server-http/dest/router";
 import authServices from "../services/authServices";
 
 @controller("/auth")
@@ -308,7 +293,7 @@ export default class AuthRouter {
   @post("/login")
   async login(ctx) {
     try {
-      const {username, password} = ctx.request.body;
+      const { username, password } = ctx.request.body;
       // Wyciągamy 2 zmienne z ciała zapytania
 
       // Dalej wywołujemy funkcje z authServices która odpowida z logowanie
@@ -338,7 +323,6 @@ export default class AuthRouter {
     };
   }
 }
-
 ```
 
 Powyższy plik tak naprawdę odpowiada tylko za skorzystanie z authServices, oraz przesłanie odpowiedzi zwrotnej.
@@ -347,6 +331,4 @@ Powyższy plik tak naprawdę odpowiada tylko za skorzystanie z authServices, ora
 
 Nasza aplikacja jest już w pełni zintegrowana z Active Directory. Za każdym razem, kiedy API będzie musiało zweryfikować pewne poświadczenia, wywołamy zapytanie do serwera LDAP. Po pozytywnej odpowiedzi wyszukujemy, czy użytkownik jest w naszej bazie, jeżeli jest, to wyciągamy od niego wartość sekret i generujemy na jej podstawie token. Jeżeli go nie ma, to dodajemy rekord do bazy, następnie generujemy token. W razie potrzeby unieważnienia tokenów, możemy zmienić sekretną wartość każdego użytkownika albo jedną wspólną dla wszystkich tokenów wartość AUTH_SECRET. Samo wdrożenie naszej aplikacji do infrastruktury opartej o LDAP nie jest zatem czymś trudnym, a czasem takie rozwiązanie pozwoli nam łatwo wdrożyć wewnątrz firmową aplikacje.
 
-
 To tyle na dzisiaj, mam nadzieję, że w jakiś sposób pomogłem wam zintegrować wasze aplikacje z serwerami LDAP. Kod aplikacji dostępny jest na moim [githubie](https://github.com/) pod [tym adresem](https://github.com/Rekseto/auth-ldap-example).
-
