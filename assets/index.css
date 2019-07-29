@@ -302,6 +302,11 @@
     align-items: center;
   }
 }
+
+.post__content ul {
+  margin: 5px;
+}
+
 .category-heading {
   padding-top: 80px;
   text-align: center;
