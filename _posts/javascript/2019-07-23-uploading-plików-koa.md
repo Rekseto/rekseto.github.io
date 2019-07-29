@@ -6,7 +6,7 @@ date: 2019-07-29 15:10:00 +0200
 categories: [javascript]
 ---
 
-Przy wykonywaniu mojego ostatniego zlecenia, doszedłem do wniosku, że uploading plików na serwer przy użyciu busbuy nie jest wcale taki jasny i prosty do wykonania, dlatego tym się dzisiaj zajmiemy.
+Przy wykonywaniu mojego ostatniego zlecenia, doszedłem do wniosku, że uploading plików na serwer przy użyciu busboy nie jest wcale taki jasny i prosty do wykonania, dlatego tym się dzisiaj zajmiemy.
 
 ## Konfiguracja serwera http
 
@@ -48,37 +48,34 @@ app.listen(3000);
 
 Dla celów pokazowych w podstawowej konfiguracji serwera zainicjalizowałem moduł odpowiedzialny za renderowanie szablonów, stwórzmy więc przykładowy formularz.
 
-```ejs
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8" />
+    <title>File uploading</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <title>File uploading</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <body>
+    <!--[if IE]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+        your experience and security.
+      </p>
+    <![endif]-->
 
-</head>
-
-<body>
-  <!--[if IE]>
-    <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-
-  <form
-      action="/"
-      method="POST"
-      enctype="multipart/form-data"
-  >
+    <form action="/" method="POST" enctype="multipart/form-data">
       <div class="inputGroup">
-          <label for="file">Wybierz plik</label>
-          <input type="file" name="file" id="file">
+        <label for="file">Wybierz plik</label>
+        <input type="file" name="file" id="file" />
       </div>
 
       <button type="submit">Prześlij</button>
-  </form>
-</body>
-
+    </form>
+  </body>
 </html>
 ```
 
@@ -125,7 +122,7 @@ Utworzyliśmy 2 pomocnicze zmienne:
 
 - parsingResult - obiekt który przechowuję strumień przesyłanego pliku oraz wszystkie inne pola
 
-Przejdźmy dalej, busboy udostępnia nam możliwość nasłuchiwania na strumień z plikiem, ponieważ oprócz samego pliku busboy przekazuje nam też nazwe pliku, dzięki czemu możemy sprawdzić jakie rozszerzenie ma plik, i w
+Przejdźmy dalej, busboy udostępnia nam możliwość nasłuchiwania na strumień z plikiem, ponieważ oprócz samego pliku busboy przekazuje nam też nazwe pliku, dzięki czemu możemy sprawdzić jakie rozszerzenie ma plik, i dla przykładu dopuścić tylko .jpg oraz .png.
 
 ```typescript
 const supportedExtensions: string[] = [".png", ".jpg", ".jpeg"];
@@ -179,7 +176,7 @@ busboy.on("file", function(
 });
 ```
 
-Funkcja onStreamFinish jest funkcją która przyjmuje strumień i zwraca Promise która rozwiąże się wtedy kiedy cały strumień przestanie płynąć
+Funkcja onStreamFinish jest funkcją która przyjmuje strumień i zwraca Promise która rozwiąże się dopiero wtedy kiedy cały strumień przestanie płynąć
 
 ```typescript
 import { Stream } from "stream";
